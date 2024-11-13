@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarterly Sales Projection</title>
+    <!-- Load static files -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'quarterly_projection_app/css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo-nav">
+            <a href="https://quant-solutions.co.za/" target="_blank">
+                <img src="{% static 'quarterly_projection_app/images/newlogo.png' %}" alt="Quantitative Solutions Logo" class="logo">
+            </a>
+            <nav>
+                <ul>
+                    <li><a>This is the Quarterly Sales Projection Tool</a></li>
+                </ul>
+            </nav>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61556956255913&mibextid=LQQJ4d" target="_blank">
+                    <img src="{% static 'quarterly_projection_app/images/icons/facebook-icon.png' %}" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://x.com/quant_solution" target="_blank">
+                    <img src="{% static 'quarterly_projection_app/images/icons/twitter-icon.png' %}" alt="Twitter" class="social-icon">
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <h1>Quarterly Sales Projection Tool</h1>
+        <p>Please note: this tool is for demonstrative purposes, use with caution.</p>
+        <!-- Quarterly Data Form -->
+        <section id="form-section">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Submit Quarterly Data</button>
+            </form>
+        </section>
+
+        <!-- Display Graph and Results if Available -->
+        {% if graph %}
+            <section id="results-section">
+                <h2>Projection Results</h2>
+                <p><strong>Trend:</strong> The quarterly data indicates a {{ trend }} trend.</p>
+                
+                <!-- Display Projected Sales List if Available -->
+                {% if future_sales_list %}
+                    <h3>Projected Sales by Quarter</h3>
+                    <ul>
+                        {% for period, sale in future_sales_list %}
+                            <li><strong>{{ period }}:</strong> {{ sale }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                
+                <!-- Display Graph -->
+                <div class="graph-container">
+                    <img src="data:image/png;base64,{{ graph }}" alt="Quarterly Sales Projection Graph">
+                </div>
+                
+                <!-- Download Button -->
+                <form action="{% url 'download_graph' %}" method="get">
+                    <button type="submit" class="btn">Download Graph (PNG)</button>
+                </form>                
+        
+            </section>
+        {% else %}
+            <p>No projection results available yet. Please submit quarterly data to see projections.</p>
+        {% endif %}
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" onclick="scrollToTop()">Back to Top</button>
+
+    <script>
+        // Show the button when the user scrolls down 200px
+        window.onscroll = function() {
+            const topButton = document.getElementById("back-to-top");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                topButton.style.display = "block";
+            } else {
+                topButton.style.display = "none";
+            }
+        };
+
+        // Scroll to the top when the button is clicked
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
